@@ -1,0 +1,11 @@
+{
+  "shop-review-badge.shopper-approved-seal":{
+    "component": "ShopperApprovedSeal"
+  },
+  "shop-review-form.shopper-approved-survey":{
+    "component": "ShopperApprovedSurvey"
+  },
+  "shop-review-widget.shopper-approved-widget":{
+    "component": "ShopperApprovedWidget"
+  }
+}

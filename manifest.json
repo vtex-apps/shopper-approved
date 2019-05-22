@@ -1,0 +1,36 @@
+{
+  "vendor": "vtex",
+  "name": "shopper-approved",
+  "version": "1.0.4",
+  "builders": {
+    "store": "0.x",
+    "react": "3.x"
+  },
+  "mustUpdateAt": "2018-09-05",
+  "scripts": {
+    "postreleasy": "vtex publish --verbose"
+  },
+  "dependencies": {
+    "vtex.store": "2.x",
+    "vtex.store-components": "3.x",
+    "vtex.apps-graphql": "2.x",
+    "vtex.styleguide": "9.x",
+    "vtex.shop-review-interfaces": "0.x"
+  },
+  "settingsSchema": {
+    "title": "Shopper Approved",
+    "type": "object",
+    "properties": {
+      "ShopperApprovedID": {
+        "title": "Shopper Approved site ID",
+        "type": "string",
+        "description": "Enter the site ID from your Shopper Approved account"
+      },
+      "ShopperApprovedToken": {
+        "title": "Shopper Approved Initial Survey token",
+        "type": "string",
+        "description": "Enter the Initial Survey token from your Shopper Approved account"
+      }
+    }
+}
+}
