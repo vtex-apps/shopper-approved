@@ -5,7 +5,7 @@
   "shop-review-form.shopper-approved-survey":{
     "component": "ShopperApprovedSurvey"
   },
-  "shop-review-widget.shopper-approved-widget":{
+  "shop-review-summary.shopper-approved-widget":{
     "component": "ShopperApprovedWidget"
   }
 }

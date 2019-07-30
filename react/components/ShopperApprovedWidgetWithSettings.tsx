@@ -25,5 +25,4 @@ export default function shopperApprovedWidgetWithSettings(Component: any): any {
         }
     }
 
-    return graphql(shopperApprovedSettings)(shopperApprovedWidgetWithSettings)
-}
+    return graphql(shopperApprovedSettings, { options: { ssr: false }})(shopperApprovedWidgetWithSettings)}

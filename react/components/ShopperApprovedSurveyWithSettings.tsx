@@ -25,5 +25,4 @@ export default function shopperApprovedSurveyWithSettings(Component: any): any {
         }
     }
 
-    return graphql(shopperApprovedSettings)(shopperApprovedSurveyWithSettings)
-}
+    return graphql(shopperApprovedSettings, { options: { ssr: false }})(shopperApprovedSurveyWithSettings)}

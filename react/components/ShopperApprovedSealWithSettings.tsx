@@ -25,5 +25,4 @@ export default function shopperApprovedSealWithSettings(Component: any): any {
         }
     }
 
-    return graphql(shopperApprovedSettings)(shopperApprovedSealWithSettings)
-}
+    return graphql(shopperApprovedSettings, { options: { ssr: false }})(shopperApprovedSealWithSettings)}
