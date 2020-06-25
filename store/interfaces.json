@@ -1,11 +1,11 @@
 {
-  "shop-review-badge.shopper-approved-seal":{
+  "shop-review-badge.shopper-approved-seal": {
     "component": "ShopperApprovedSeal"
   },
-  "shop-review-form.shopper-approved-survey":{
+  "shop-review-form.shopper-approved-survey": {
     "component": "ShopperApprovedSurvey"
   },
-  "shop-review-summary.shopper-approved-widget":{
+  "shop-review-summary.shopper-approved-widget": {
     "component": "ShopperApprovedWidget"
   }
 }

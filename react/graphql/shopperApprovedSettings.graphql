@@ -1,6 +1,5 @@
 query AppSettings {
-  appSettings(app: "vtex.shopper-approved", version: "1.x") 
-  {
+  appSettings(app: "vtex.shopper-approved", version: "1.x") {
     message
   }
 }
