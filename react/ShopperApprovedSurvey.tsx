@@ -1,53 +1,64 @@
-import React, { Component } from 'react'
+import React, { FunctionComponent } from 'react'
+import { useQuery } from 'react-apollo'
 
-import shopperApprovedSurveyWithSettings from './components/ShopperApprovedSurveyWithSettings'
+import useScriptLoader from './hooks/useScriptLoader'
+import AppSettings from './graphql/shopperApprovedSettings.graphql'
 
-type settings = {
-  settings: settingsFields
+interface SettingsProps {
+  settings: Settings
 }
-type settingsFields = {
+
+interface Settings {
   ShopperApprovedID: string
   ShopperApprovedToken: string
 }
-class ShopperApprovedSurvey extends Component<settings> {
-  constructor(props: Readonly<settings>) {
-    super(props)
-    this.saLoadScript = this.saLoadScript.bind(this)
-  }
 
-  public saLoadScript(src: string) {
-    const js2 = window.document.createElement('script')
+const ShopperApprovedSurveyInner: FunctionComponent<SettingsProps> = ({
+  settings,
+}) => {
+  const d = new Date()
+  const js2 = window.document.createElement('script')
 
-    js2.type = 'text/javascript'
-    js2.textContent = `var sa_values = { "site":${this.props.settings.ShopperApprovedID}, "token":"${this.props.settings.ShopperApprovedToken}" }`
-    document.getElementsByTagName('head')[0].appendChild(js2)
+  js2.type = 'text/javascript'
+  js2.textContent = `var sa_values = { "site":${settings.ShopperApprovedID}, "token":"${settings.ShopperApprovedToken}" }`
+  document.getElementsByTagName('head')[0].appendChild(js2)
 
-    const js = window.document.createElement('script')
+  useScriptLoader(
+    d.getTime() - 172800000 > 1477399567000
+      ? `//www.shopperapproved.com/thankyou/rate/${settings.ShopperApprovedID}.js`
+      : `//direct.shopperapproved.com/thankyou/rate/${
+          settings.ShopperApprovedID
+        }.js?d=${d.getTime()}`,
+    'shopperapproved'
+  )
 
-    js.src = src
-    js.type = 'text/javascript'
-    document.getElementsByTagName('head')[0].appendChild(js)
-  }
-
-  public componentDidMount() {
-    const d = new Date()
-
-    if (d.getTime() - 172800000 > 1477399567000) {
-      this.saLoadScript(
-        `//www.shopperapproved.com/thankyou/rate/${this.props.settings.ShopperApprovedID}.js`
-      )
-    } else {
-      this.saLoadScript(
-        `//direct.shopperapproved.com/thankyou/rate/${
-          this.props.settings.ShopperApprovedID
-        }.js?d=${d.getTime()}`
-      )
-    }
-  }
-
-  public render() {
-    return null
-  }
+  return null
 }
 
-export default shopperApprovedSurveyWithSettings(ShopperApprovedSurvey)
+const ShopperApprovedSurvey: FunctionComponent = () => {
+  const { data } = useQuery(AppSettings, { ssr: false })
+
+  if (!data?.appSettings?.message) return null
+
+  const settings = JSON.parse(data.appSettings.message)
+
+  if (!settings.ShopperApprovedID) {
+    console.warn(
+      'No Shopper Approved ID defined. Please add it in the app settings.'
+    )
+
+    return null
+  }
+
+  if (!settings.ShopperApprovedID) {
+    console.warn(
+      'No Shopper Approved Token defined. Please add it in the app settings.'
+    )
+
+    return null
+  }
+
+  return <ShopperApprovedSurveyInner settings={settings} />
+}
+
+export default ShopperApprovedSurvey
