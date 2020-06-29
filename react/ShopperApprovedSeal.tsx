@@ -64,6 +64,8 @@ const ShopperApprovedSeal: FunctionComponent<WrappedComponentProps> = ({
       <a
         href={`https://www.shopperapproved.com/reviews/${settings.ShopperApprovedDomain}/`}
         className="shopperlink"
+        target="_blank"
+        rel="noreferrer"
       >
         <img
           src={`//www.shopperapproved.com/newseals/${settings.ShopperApprovedID}/white-mini-icon.gif`}
