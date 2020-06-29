@@ -1,49 +1,81 @@
-import React,{Component} from 'react'
+import React, { FunctionComponent } from 'react'
 import { Container } from 'vtex.store-components'
-import shopperApprovedSealWithSettings from './components/ShopperApprovedSealWithSettings'
+import { useQuery } from 'react-apollo'
+import { defineMessages, injectIntl, WrappedComponentProps } from 'react-intl'
+import { useCssHandles } from 'vtex.css-handles'
 
-type settings = {
-    settings: settingsFields
-    
-}
-type settingsFields =
-{
-    ShopperApprovedID : string
-}
-class ShopperApprovedSeal extends Component<settings> {
-    
-constructor(props: Readonly<settings>) 
-    {
-        super(props);
-        this.contextMenuFunction = this.contextMenuFunction.bind(this);
-    }
+import useScriptLoader from './hooks/useScriptLoader'
+import AppSettings from './graphql/shopperApprovedSettings.graphql'
 
-        componentDidMount() 
-        {
-            var js = window.document.createElement("script"); 
-            js.src = ('//www.shopperapproved.com/seals/certificate.js'); 
-            js.type = "text/javascript"; 
-            document.getElementsByTagName("head")[0].appendChild(js);
-        }
-    contextMenuFunction(e: { preventDefault: () => void; })
-    {
-        var d = new Date(); 
-        alert('Copying Prohibited by Law - This image and all included logos are copyrighted by Shopper Approved © '+d.getFullYear()+'.'); 
-        e.preventDefault();
-        return false;
-    }
-    render()
-    {
-        return(
-            <Container>
-            <a href="https://www.shopperapproved.com/reviews/invictastores.com/" className="shopperlink">
-            <img src={"//www.shopperapproved.com/newseals/"+this.props.settings.ShopperApprovedID+"/white-mini-icon.gif"} style={{border: 0}} alt="Customer Reviews" onContextMenu={this.contextMenuFunction} />
-            </a>
-            </Container>
-        )
-        
-    }
-    
+const CSS_HANDLES = ['shopperApprovedSealContainer'] as const
+
+const messages = defineMessages({
+  altText: {
+    defaultMessage: 'Customer Reviews',
+    id: 'store/shopperApproved.seal.altText',
+  },
+})
+
+const ShopperApprovedSeal: FunctionComponent<WrappedComponentProps> = ({
+  intl,
+}) => {
+  const handles = useCssHandles(CSS_HANDLES)
+  const { data } = useQuery(AppSettings, { ssr: false })
+
+  useScriptLoader(
+    '//www.shopperapproved.com/seals/certificate.js',
+    'shopperapproved'
+  )
+
+  function handleContextMenuFunction(e: { preventDefault: () => void }) {
+    const d = new Date()
+
+    // eslint-disable-next-line no-alert
+    alert(
+      `Copying Prohibited by Law - This image and all included logos are copyrighted by Shopper Approved © ${d.getFullYear()}.`
+    )
+    e.preventDefault()
+
+    return false
+  }
+
+  if (!data?.appSettings?.message) return null
+
+  const settings = JSON.parse(data.appSettings.message)
+
+  if (!settings.ShopperApprovedID) {
+    console.warn(
+      'No Shopper Approved ID defined. Please add it in the app settings.'
+    )
+
+    return null
+  }
+
+  if (!settings.ShopperApprovedDomain) {
+    console.warn(
+      'No Shopper Approved Domain defined. Please add it in the app settings.'
+    )
+
+    return null
+  }
+
+  return (
+    <Container className={handles.shopperApprovedSealContainer}>
+      <a
+        href={`https://www.shopperapproved.com/reviews/${settings.ShopperApprovedDomain}/`}
+        className="shopperlink"
+        target="_blank"
+        rel="noreferrer"
+      >
+        <img
+          src={`//www.shopperapproved.com/newseals/${settings.ShopperApprovedID}/white-mini-icon.gif`}
+          style={{ border: 0 }}
+          alt={intl.formatMessage(messages.altText)}
+          onContextMenu={handleContextMenuFunction}
+        />
+      </a>
+    </Container>
+  )
 }
 
-export default shopperApprovedSealWithSettings(ShopperApprovedSeal)
+export default injectIntl(ShopperApprovedSeal)

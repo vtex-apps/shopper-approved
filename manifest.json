@@ -2,10 +2,12 @@
   "vendor": "vtex",
   "name": "shopper-approved",
   "version": "1.0.6",
+  "title": "Shopper Approved",
   "builders": {
     "store": "0.x",
     "react": "3.x",
-    "docs": "0.x"
+    "docs": "0.x",
+    "messages": "1.x"
   },
   "mustUpdateAt": "2018-09-05",
   "scripts": {
@@ -15,6 +17,7 @@
     "vtex.store": "2.x",
     "vtex.store-components": "3.x",
     "vtex.apps-graphql": "2.x",
+    "vtex.css-handles": "0.x",
     "vtex.styleguide": "9.x",
     "vtex.shop-review-interfaces": "0.x"
   },
@@ -31,7 +34,13 @@
         "title": "Shopper Approved Initial Survey token",
         "type": "string",
         "description": "Enter the Initial Survey token from your Shopper Approved account"
+      },
+      "ShopperApprovedDomain": {
+        "title": "Shopper Approved domain",
+        "type": "string",
+        "description": "Your store domain as it appears in Shopper Approved, in the form 'storename.com'"
       }
     }
-  }
+  },
+  "$schema": "https://raw.githubusercontent.com/vtex/node-vtex-api/master/gen/manifest.schema"
 }

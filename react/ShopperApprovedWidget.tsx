@@ -1,52 +1,83 @@
-import React,{Component} from 'react'
+import React, { FunctionComponent } from 'react'
+import { FormattedMessage } from 'react-intl'
 import { Container } from 'vtex.store-components'
-import shopperApprovedWidgetWithSettings from './components/ShopperApprovedWidgetWithSettings'
+import { useQuery } from 'react-apollo'
+import { useCssHandles } from 'vtex.css-handles'
 
-type settings = {
-    settings: settingsFields
-    
+import useScriptLoader from './hooks/useScriptLoader'
+import AppSettings from './graphql/shopperApprovedSettings.graphql'
+
+interface SettingsProps {
+  settings: Settings
 }
-type settingsFields =
-{
-    ShopperApprovedID : string
+
+interface Settings {
+  ShopperApprovedID: string
+  ShopperApprovedDomain: string
 }
-class ShopperApprovedWidget extends Component<settings> {
-    constructor(props: Readonly<settings>) 
-    {
-        super(props);
-        this.saLoadScript = this.saLoadScript.bind(this);
-    }
 
-    saLoadScript(src: string) 
-    { 
-        var js = window.document.createElement("script"); 
-        js.src = src; 
-        js.type = "text/javascript"; 
-        document.getElementsByTagName("head")[0].appendChild(js); 
-    } 
+const CSS_HANDLES = ['shopperApprovedWidgetContainer'] as const
 
-    componentDidMount() 
-    {
-        this.saLoadScript('//www.shopperapproved.com/merchant/'+this.props.settings.ShopperApprovedID+'.js'); 
-    }
+const ShopperApprovedWidgetInner: FunctionComponent<SettingsProps> = ({
+  settings,
+}) => {
+  const handles = useCssHandles(CSS_HANDLES)
 
-render()
-{
-    return(
-        <Container>
-        <div className="block-title customNavigation">Reviews from past customers</div>
-        <div id="shopper_review_page">
-        <script type="text/javascript">var sa_review_count = 1; var sa_date_format = 'F j, Y'; </script>
-        <div id="review_header"></div>
-        <div id="merchant_page"></div>
+  useScriptLoader(
+    `//www.shopperapproved.com/merchant/${settings.ShopperApprovedID}.js`,
+    'shopperapproved'
+  )
+
+  const script = `var sa_review_count = 1; var sa_date_format = 'F j, Y';`
+
+  return (
+    <Container className={handles.shopperApprovedWidgetContainer}>
+      <div className="block-title customNavigation">
+        <FormattedMessage id="store/shopperApproved.widget.title" />
+      </div>
+      <div id="shopper_review_page">
+        <script
+          type="text/javascript"
+          dangerouslySetInnerHTML={{ __html: script }}
+        />
+        <div id="review_header" />
+        <div id="merchant_page" />
         <div id="review_image">
-        <a href="https://www.shopperapproved.com/reviews/invictastores.com/" target="_blank" rel="nofollow"></a>
+          <a
+            href={`https://www.shopperapproved.com/reviews/${settings.ShopperApprovedDomain}/`}
+            target="_blank"
+            rel="nofollow noreferrer"
+          >{` `}</a>
         </div>
-        </div>
-        </Container>
-    )
-    
-}
+      </div>
+    </Container>
+  )
 }
 
-export default shopperApprovedWidgetWithSettings(ShopperApprovedWidget)
+const ShopperApprovedWidget: FunctionComponent = () => {
+  const { data } = useQuery(AppSettings, { ssr: false })
+
+  if (!data?.appSettings?.message) return null
+
+  const settings = JSON.parse(data.appSettings.message)
+
+  if (!settings.ShopperApprovedID) {
+    console.warn(
+      'No Shopper Approved ID defined. Please add it in the app settings.'
+    )
+
+    return null
+  }
+
+  if (!settings.ShopperApprovedToken) {
+    console.warn(
+      'No Shopper Approved Token defined. Please add it in the app settings.'
+    )
+
+    return null
+  }
+
+  return <ShopperApprovedWidgetInner settings={settings} />
+}
+
+export default ShopperApprovedWidget
