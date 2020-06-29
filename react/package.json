@@ -22,5 +22,5 @@
     "vtex.store-components": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.store-components@3.119.3/public/_types/react",
     "vtex.styleguide": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.styleguide@9.123.0/public/@types/vtex.styleguide"
   },
-  "version": "1.0.6"
+  "version": "1.1.0"
 }
