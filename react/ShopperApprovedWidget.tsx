@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-has-content */
 import React, { FunctionComponent } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { Container } from 'vtex.store-components'
@@ -48,7 +47,7 @@ const ShopperApprovedWidgetInner: FunctionComponent<SettingsProps> = ({
             href={`https://www.shopperapproved.com/reviews/${settings.ShopperApprovedDomain}/`}
             target="_blank"
             rel="nofollow noreferrer"
-          />
+          >{` `}</a>
         </div>
       </div>
     </Container>
